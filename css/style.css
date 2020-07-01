@@ -1,0 +1,66 @@
+html{
+	font-family: sans-serif;
+	background-color: #2980b9;
+	margin: 0;
+    padding: 0;
+    color: white;
+    text-align: center;	
+}
+.text{    
+	padding: 0 0 20px 0;
+}
+.container{
+    width: 800px;
+    margin:0 auto;  
+}
+.flex{    
+    display: flex; 
+    align-items: center;
+    align-content: center;
+    align-items: flex-start;
+}
+.flex>div{
+    padding: 10px;
+}
+.buttons{
+    width: 200px;    
+}
+.canvas{
+    margin:0 auto; 
+    width: 300px;
+}
+.comment{
+    width: 200px;    
+}
+ button{
+	outline: none;
+    padding: 0.5rem 1rem;
+    margin-top: 30px;
+    border: 2px solid rgba(255,255,255,0.5);
+	border-radius: 20px;
+    background: none;    
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 1.5s .5s, border 3s 1s; 	
+	
+} 
+button:hover{
+	background: rgba(255,255,255,0.2);
+}
+
+#score{
+    color:#fff;
+    font-size: 30px;  
+    padding: 20px;   
+}
+.comment>div{
+   padding: 10px; 
+   font-size: 30px;  
+}
+#comment{
+    margin-top: 20px;
+    color:yellow;
+    font-size: 30px;
+}
