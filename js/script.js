@@ -6,22 +6,23 @@ const interval = 4;
 let button = document.querySelector(".buttons");
 let empty = undefined;
 let score = undefined;
-let mixItems = getItems();
+let mixItems = [];
 
 
 button.addEventListener('click', function (event) {
-    console.log("repeat-game", event.target.id);
     switch (event.target.id) {
         case "new-game":
-            addComment(0);
             newGame();
             break;
-        case "continue-game":
-            continueGame();
+        case "load-game":
+            loadGame();
+            break;
+        case "save-game":
+            saveGame();
             break;
         case "repeat-game":
             addComment(2);
-            repeatGame();
+            repeatGame('repeat');
             break;
         default:
             break;
@@ -57,15 +58,20 @@ function move(data) {
             return;
             break;
     }
-    addComment(4);
-    //Конец игры
-    gameOver();
+    addComment('clear');
     //Обновление поля 
     drawField();
-    //Сохранение текущей раскладки в localStorage
-    setlocalStorage('mixItems');
-    //Сохранить счет
-    setScorelocalStorage();
+    if (gameOver()) {
+        //Если расклад совпал с финальным
+        addComment('over');
+        //dellocalStorage('currentItems');
+        //dellocalStorage('currentScore');
+        score = 0;
+    } else {
+        setlocalStorage('currentItems');
+        setScorelocalStorage('currentScore');
+    }
+
 }
 
 function keyDown() {
@@ -108,8 +114,7 @@ function getScore() {
 }
 
 function clearScore() {
-    score = 0;
-    setScore(score);
+    setScore("0");
 }
 
 function toMix() {
@@ -119,65 +124,116 @@ function toMix() {
     });
 }
 function addComment(data) {
-    let text = [
-        "Новая игра начинается!",
-        "Вы выuграли! Игра закончена!",
-        "Повторяем игру!",
-        ""
-    ];
-    document.getElementById("comment").textContent = text[data];
-
-
+    let message = {
+        new: "Новая игра начинается!",
+        over: "Вы выuграли! Игра закончена!",
+        repeat: "Повторяем игру!",
+        norepeat: "Сохраненный расклад уже загружен!",
+        nosave: "Нет сохраненных раскладов! Начните новую игру.",
+        save: "Игра сохранена!",
+        load: "Игра загружена!",
+        nosavegame: "Нет сохраненных игр! Начните новую игру.",
+        clear: "",
+    };
+    document.getElementById("comment").textContent = message[data];
 }
 
 function gameOver() {
     if (mixItems.join(":") == getItems().join(":")) {
-        addComment(1);
-        dellocalStorage();
         return true;
     }
     return false;
 }
 
 function newGame() {
-    hidecontinueGame();
-    //Очистить количество ходов
+    addComment('new');
+    //Очистить счет
+    score = 0;
     clearScore();
+    //Сохранить счет
+    setScorelocalStorage('currentScore');
     //Подбор валидного решения
     validate();
-    //Сохранение текущей раскладки в localStorage
-    setlocalStorage('mixItems');
     //Сохранить расклад для повтора
-    setlocalStorage('newMixItems');
-    //Сохранить счет
-    setScorelocalStorage();
+    setlocalStorage('first');
+    //Сохранить текущий расклад
+    setlocalStorage('currentItems');
     //поле
     drawField();
-
 }
 
-function continueGame() {
-    hidecontinueGame();
-    mixItems = getlocalStorage('mixItems');
-    getScorelocalStorage();
+function loadGame() {
+    let data = getlocalStorage('saveItems');
+
+    //Наличие сохраненной мгры
+    if (!data) {
+        addComment('nosavegame');
+        return;
+    }
+
+    //Получить сохраненную игру
+    mixItems = data;
+    //Получить сохраненный счет
+    score = getScorelocalStorage('saveScore');
     setScore(score);
-    //поле
+
+    //Записать текуший расклад, счет и начальный расклад
+    setlocalStorage('currentItems');
+    setlocalStorage('first');
+    setScorelocalStorage('currentScore');
+
+    addComment('load');
+    //Поле
     drawField();
+}
+
+
+function saveGame() {
+    //Записать в localStorage счет 
+    setScorelocalStorage('saveScore');
+    //Записать в localStorage текущую позицию
+    setlocalStorage('saveItems');
+    setlocalStorage('savefirst');
+    addComment('save');
 }
 
 function repeatGame() {
-    console.log("ghjfdfdf");
-    hidecontinueGame();
-    mixItems = getlocalStorage('newMixItems');
-    console.log(mixItems);
+    let data = getlocalStorage('first');
+
+    //Наличие сохраненной раскладки
+    if (!data) {
+        addComment('nosave');
+        return;
+    }
+
+    //Совпадает текущий расклад с сохраненным
+    if (mixItems.join(":") == data.join(":")) {
+        addComment('norepeat');
+        return;
+    }
+    addComment('repeat');
+    mixItems = data;
+    score = 0;
     clearScore();
     //поле
     drawField();
 }
 
-//спрятать кнопку Продолжить
-function hidecontinueGame() {
-    document.getElementById("continue-game").style.display = "none";
+function uploadGame() {
+    let data = getlocalStorage('currentItems');
+
+    //Наличие текущей мгры
+    if (!data) {
+        newGame();
+        return;
+    }
+    //Получить  игру
+    mixItems = data;
+    //Получить  счет
+    score = getScorelocalStorage('currentScore');
+    setScore(score);
+    //Поле
+    drawField();
 }
 
 //нарисовать поле с костяшками 
@@ -227,17 +283,25 @@ function validate() {
     }
 }
 
-//Записать в localStorage расклад и количество ходов 
-function setlocalStorage(data) {
-    localStorage.setItem('score', score);
-    localStorage.setItem(data, mixItems);
-}
-//Записать в localStorage счет 
-function setScorelocalStorage() {
-    localStorage.setItem('score', score);
+//**********localStorage************ */
+// currentItems - текущий расклад костяшек
+// currentScore - текущий cчет
+// first - начальный расклад (для кнопки повторить)
+// saveItems - сохраненный пользователем текущий расклад костяшек
+// saveScore - сохраненный пользователем текущий счет
+// savefirst - сохраненный начальный расклад (для кнопки повторить)
+
+//Записать в localStorage расклад или счет
+function setlocalStorage(name) {
+    localStorage.setItem(name, mixItems);
 }
 
-//Получить  из localStorage расклад и количество ходов 
+//Записать в localStorage расклад или счет
+function setScorelocalStorage(name) {
+    localStorage.setItem(name, score);
+}
+
+//Получить  из localStorage расклад 
 function getlocalStorage(name) {
     let data = localStorage.getItem(name);
     if (data) {
@@ -251,23 +315,23 @@ function getlocalStorage(name) {
     return false;
 }
 
-//Получить  из localStorage количество ходов 
-function getScorelocalStorage() {
-    score = localStorage.getItem('score') * 1;
+//Получить  из localStorage счет 
+function getScorelocalStorage(name) {
+    return localStorage.getItem(name) * 1;
 }
 
-//Удалить из localStorage расклад и количество ходов 
-function dellocalStorage() {
-    localStorage.removeItem('mixItems');
-    localStorage.removeItem('score');
+//Удалить из localStorage 
+function dellocalStorage(name) {
+    localStorage.removeItem(name);
 }
 
+//**********SessionStorage************ */
 //Записать в SessionStorage признак перезагрузки 
 function setSessionStorage() {
-    sessionStorage.setItem("is_reloaded", true)
+    sessionStorage.setItem("is_reloaded", true);
 }
 
-//Получить  из SessionStorage признак перезагрузки 
+//Получить из SessionStorage признак перезагрузки 
 function getSessionStorage() {
     return sessionStorage.getItem("is_reloaded");
 }
@@ -281,10 +345,15 @@ function getItems() {
     return data;
 }
 
-
-
+//**********Запуск********
 if (getSessionStorage()) {
-    continueGame();
+    //При перезагрузке страницы
+    uploadGame();
 } else {
+    //При загрузке новой страницы
+    empty = 16;
+    score = 0;
+    mixItems = getItems();
+    //поле
     drawField();
 }
