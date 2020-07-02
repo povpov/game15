@@ -43,8 +43,7 @@ html{
     color: rgba(255,255,255,1);
     text-decoration: none;
     cursor: pointer;
-    transition: color 1.5s .5s, border 3s 1s; 	
-	
+    transition: color 1.5s .5s, border 3s 1s; 		
 } 
 button:hover{
 	background: rgba(255,255,255,0.2);

@@ -187,7 +187,6 @@ function loadGame() {
     drawField();
 }
 
-
 function saveGame() {
     //Записать в localStorage счет 
     setScorelocalStorage('saveScore');
