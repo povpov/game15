@@ -20,7 +20,6 @@ button.addEventListener('click', function (event) {
             saveGame();
             break;
         case "repeat-game":
-            addComment(2);
             repeatGame('repeat');
             break;
         default:
@@ -32,8 +31,6 @@ button.addEventListener('click', function (event) {
 document.addEventListener('keydown', function (event) {
     move(event.key);
 });
-
-
 
 function move(data) {
     empty = mixItems.indexOf(16);
@@ -64,14 +61,11 @@ function move(data) {
     if (gameOver()) {
         //Если расклад совпал с финальным
         addComment('over');
-        //dellocalStorage('currentItems');
-        //dellocalStorage('currentScore');
         score = 0;
     } else {
         setlocalStorage('currentItems');
         setScorelocalStorage('currentScore');
     }
-
 }
 
 function keyDown() {
