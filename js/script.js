@@ -32,6 +32,8 @@ document.addEventListener('keydown', function (event) {
     move(event.key);
 });
 
+
+
 function move(data) {
     empty = mixItems.indexOf(16);
     switch (data) {
@@ -66,6 +68,7 @@ function move(data) {
         setlocalStorage('currentItems');
         setScorelocalStorage('currentScore');
     }
+
 }
 
 function keyDown() {
@@ -73,7 +76,7 @@ function keyDown() {
     //Изменение массива
     mixItems[empty] = mixItems[empty - 4];
     mixItems[empty - 4] = 16;
-    getScore();
+    addScore();
 
 }
 function keyUp() {
@@ -81,28 +84,29 @@ function keyUp() {
     //Изменение массива
     mixItems[empty] = mixItems[empty + 4];
     mixItems[empty + 4] = 16;
-    getScore();
+    addScore();
 }
 function keyLeft() {
     if ((empty % 4) == 3) return;
     //Изменение массива
     mixItems[empty] = mixItems[empty + 1];
     mixItems[empty + 1] = 16;
-    getScore();
+    addScore();
 }
 function keyRight() {
     if (empty % 4 == 0) return;
     //Изменение массива
     mixItems[empty] = mixItems[empty - 1];
     mixItems[empty - 1] = 16;
-    getScore();
+    addScore();
 }
+
 
 function setScore(data) {
     document.getElementById("score").textContent = data;
 }
 
-function getScore() {
+function addScore() {
     score = score + 1;
     setScore(score);
 }
@@ -168,7 +172,7 @@ function loadGame() {
     //Получить сохраненную игру
     mixItems = data;
     //Получить сохраненный счет
-    score = getScorelocalStorage('saveScore');
+    score = addScorelocalStorage('saveScore');
     setScore(score);
 
     //Записать текуший расклад, счет и начальный расклад
@@ -223,7 +227,7 @@ function uploadGame() {
     //Получить  игру
     mixItems = data;
     //Получить  счет
-    score = getScorelocalStorage('currentScore');
+    score = addScorelocalStorage('currentScore');
     setScore(score);
     //Поле
     drawField();
@@ -263,7 +267,7 @@ function validate() {
         k = 0;
         for (let i = 0; i < 15; i++) {
             if (mixItems[i] == 16) {
-                k = Math.floor(i / 4) + 1;
+                k += Math.floor(i / 4) + 1;
             } else {
                 for (let j = i; j < 15; j++) {
                     if (mixItems[i] > mixItems[j]) {
@@ -272,6 +276,8 @@ function validate() {
                 }
             }
         }
+        console.log("валидация", (k % 2 == 0));
+        console.log(mixItems);
         if (k % 2 == 0) break;
     }
 }
@@ -309,7 +315,7 @@ function getlocalStorage(name) {
 }
 
 //Получить  из localStorage счет 
-function getScorelocalStorage(name) {
+function addScorelocalStorage(name) {
     return localStorage.getItem(name) * 1;
 }
 
@@ -318,7 +324,7 @@ function dellocalStorage(name) {
     localStorage.removeItem(name);
 }
 
-class SessionStorage {   
+class SessionStorage {
     //Записать в SessionStorage признак перезагрузки 
     setSessionStorage() {
         sessionStorage.setItem("is_reloaded", true);
