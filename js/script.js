@@ -8,7 +8,6 @@ let empty = undefined;
 let score = undefined;
 let mixItems = [];
 
-
 button.addEventListener('click', function (event) {
     switch (event.target.id) {
         case "new-game":
@@ -27,12 +26,13 @@ button.addEventListener('click', function (event) {
         default:
             break;
     }
-    setSessionStorage();
+    iSessionStorage.setSessionStorage();
 });
 
 document.addEventListener('keydown', function (event) {
     move(event.key);
 });
+
 
 
 function move(data) {
@@ -324,28 +324,25 @@ function dellocalStorage(name) {
     localStorage.removeItem(name);
 }
 
-//**********SessionStorage************ */
-//Записать в SessionStorage признак перезагрузки 
-function setSessionStorage() {
-    sessionStorage.setItem("is_reloaded", true);
-}
+class SessionStorage {   
+    //Записать в SessionStorage признак перезагрузки 
+    setSessionStorage() {
+        sessionStorage.setItem("is_reloaded", true);
+    }
 
-//Получить из SessionStorage признак перезагрузки 
-function getSessionStorage() {
-    return sessionStorage.getItem("is_reloaded");
+    //Получить из SessionStorage признак перезагрузки 
+    getSessionStorage() {
+        return sessionStorage.getItem("is_reloaded");
+    }
 }
-
 //Получить финишный расклад 
 function getItems() {
-    let data = [];
-    for (let i = 1; i < 17; i++) {
-        data.push(i);
-    }
-    return data;
+    return [1, 2, 3, 4, 5, 6, 7, 6, 7, 10, 11, 12, 13, 14, 15, 16];
 }
 
-//**********Запуск********
-if (getSessionStorage()) {
+/**********Запуск********/
+let iSessionStorage = new SessionStorage();
+if (iSessionStorage.getSessionStorage()) {
     //При перезагрузке страницы
     uploadGame();
 } else {
@@ -355,4 +352,5 @@ if (getSessionStorage()) {
     mixItems = getItems();
     //поле
     drawField();
+    iSessionStorage.setSessionStorage();
 }
