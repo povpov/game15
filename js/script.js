@@ -20,7 +20,7 @@ button.addEventListener('click', function (event) {
             saveGame();
             break;
         case "repeat-game":
-            repeatGame('repeat');
+            repeatGame();
             break;
         default:
             break;
