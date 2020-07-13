@@ -267,17 +267,16 @@ function validate() {
         k = 0;
         for (let i = 0; i < 15; i++) {
             if (mixItems[i] == 16) {
-                k += Math.floor(i / 4) + 1;
+                k =k+ Math.floor(i / 4) + 1;
             } else {
                 for (let j = i; j < 15; j++) {
                     if (mixItems[i] > mixItems[j]) {
                         k++;
                     }
+                    
                 }
             }
         }
-        console.log("валидация", (k % 2 == 0));
-        console.log(mixItems);
         if (k % 2 == 0) break;
     }
 }
