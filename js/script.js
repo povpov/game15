@@ -269,7 +269,7 @@ function validate() {
             if (mixItems[i] == 16) {
                 k =k+ Math.floor(i / 4) + 1;
             } else {
-                for (let j = i; j < 15; j++) {
+                for (let j = i; j < 16; j++) {
                     if (mixItems[i] > mixItems[j]) {
                         k++;
                     }
@@ -277,7 +277,7 @@ function validate() {
                 }
             }
         }
-        if (k % 2 == 0) break;
+        if (k % 2 == 0) return;
     }
 }
 
